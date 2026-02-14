@@ -21,7 +21,25 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    // Also allow localhost for development
+    if (!origin) return callback(null, true);
+    
+    // Remove trailing slash if present
+    const allowedOrigin = process.env.FRONTEND_URL 
+      ? process.env.FRONTEND_URL.replace(/\/$/, '')
+      : 'http://localhost:3000';
+    
+    // Compare without trailing slash
+    const requestOrigin = origin.replace(/\/$/, '');
+    
+    if (allowedOrigin === requestOrigin || allowedOrigin === origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 }));
 app.use(express.json());
