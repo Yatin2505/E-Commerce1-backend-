@@ -53,8 +53,8 @@ const authorize = (...roles) => {
 
 // Generate JWT Token
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRE,
+  return jwt.sign({ id }, process.env.JWT_SECRET || 'default_secret_change_in_production', {
+    expiresIn: process.env.JWT_EXPIRE || '30d',
   });
 };
 
