@@ -36,6 +36,7 @@ app.use(cors({
       'https://vercel.app',
       'https://e-commerce1-frontend-git-main-yatin2505s-projects.vercel.app',
       'https://e-commerce1-frontend-yatin2505s-projects.vercel.app',
+      'https://e-commerce1-frontend-kv20hdcpr-yatin2505s-projects.vercel.app',
     ].filter(Boolean);
     
     // Compare without trailing slash
