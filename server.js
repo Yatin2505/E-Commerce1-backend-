@@ -28,17 +28,30 @@ app.use(cors({
     if (!origin) return callback(null, true);
     
     // Remove trailing slash if present
-    const allowedOrigin = process.env.FRONTEND_URL 
-      ? process.env.FRONTEND_URL.replace(/\/$/, '')
-      : 'http://localhost:3000';
+    const allowedOrigins = [
+      process.env.FRONTEND_URL?.replace(/\/$/, ''),
+      'http://localhost:3000',
+      'http://localhost:5173',
+      // Vercel preview/production domains
+      'https://vercel.app',
+      'https://e-commerce1-frontend-git-main-yatin2505s-projects.vercel.app',
+      'https://e-commerce1-frontend-yatin2505s-projects.vercel.app',
+    ].filter(Boolean);
     
     // Compare without trailing slash
     const requestOrigin = origin.replace(/\/$/, '');
     
-    if (allowedOrigin === requestOrigin || allowedOrigin === origin) {
+    // Allow if origin matches any of the allowed origins
+    if (allowedOrigins.includes(requestOrigin) || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      // For development, allow all origins
+      if (process.env.NODE_ENV === 'development') {
+        callback(null, true);
+      } else {
+        console.log('CORS blocked origin:', origin);
+        callback(new Error('Not allowed by CORS'));
+      }
     }
   },
   credentials: true,
