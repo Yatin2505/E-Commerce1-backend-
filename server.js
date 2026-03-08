@@ -26,7 +26,7 @@ app.use(cors({
     // Allow requests with no origin (like mobile apps or curl requests)
     // Also allow localhost for development
     if (!origin) return callback(null, true);
-    
+     
     // Remove trailing slash if present
     const allowedOrigins = [
       process.env.FRONTEND_URL?.replace(/\/$/, ''),
