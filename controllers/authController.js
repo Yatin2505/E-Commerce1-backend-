@@ -213,6 +213,44 @@ const deleteUser = async (req, res, next) => {
   }
 };
 
+// @desc    Create admin user (for testing/development)
+// @route   POST /api/auth/create-admin
+// @access  Public (should be restricted in production)
+const createAdmin = async (req, res, next) => {
+  try {
+    const { email, secretKey } = req.body;
+    
+    // Simple secret key check (in production, use environment variable)
+    const ADMIN_SECRET_KEY = process.env.ADMIN_SECRET_KEY || 'admin_secret_123';
+    
+    if (secretKey !== ADMIN_SECRET_KEY) {
+      return next(new ErrorHandler('Invalid secret key', 401));
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return next(new ErrorHandler('User not found', 404));
+    }
+
+    user.role = 'admin';
+    await user.save();
+
+    res.json({
+      success: true,
+      message: 'User promoted to admin successfully',
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
@@ -221,4 +259,5 @@ module.exports = {
   updatePassword,
   getAllUsers,
   deleteUser,
+  createAdmin,
 };
